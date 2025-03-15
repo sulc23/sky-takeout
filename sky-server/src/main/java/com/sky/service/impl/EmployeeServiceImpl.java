@@ -39,7 +39,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     public Employee login(EmployeeLoginDTO employeeLoginDTO) {
 
 
-
         String username = employeeLoginDTO.getUsername();
         String password = employeeLoginDTO.getPassword();
 
@@ -74,7 +73,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     //新增员工
     public void save(EmployeeDTO employeeDTO) {
 
-        System.out.println("Service线程id："+Thread.currentThread().getId());
+        System.out.println("Service线程id：" + Thread.currentThread().getId());
         Employee employee = new Employee();
 
         //将DTO中的数据拷贝到实体类中
@@ -112,13 +111,31 @@ public class EmployeeServiceImpl implements EmployeeService {
         //select * from employee limit 0,10
 
         //PageHelper.startPage本质上也是使用ThreadLocal对象，传递pageSize和pageNum
-        PageHelper.startPage(employeePageQueryDTO.getPage(),employeePageQueryDTO.getPageSize());
-        Page<Employee> page= employeeMapper.pageQuery(employeePageQueryDTO);
+        PageHelper.startPage(employeePageQueryDTO.getPage(), employeePageQueryDTO.getPageSize());
+        Page<Employee> page = employeeMapper.pageQuery(employeePageQueryDTO);
 
         long total = page.getTotal();
         List<Employee> result = page.getResult();
-        return new PageResult(total,result);
+        return new PageResult(total, result);
 
     }
+
+    /**
+     * 启用或禁用员工
+     *
+     * @param id
+     * @param status
+     */
+    @Override
+    public void startOrStop(Integer status, Long id) {
+        Employee employee = Employee.builder()
+                .id(id)
+                .status(status)
+                .build();
+
+        employeeMapper.updateById(employee);
+
+    }
+
 
 }
